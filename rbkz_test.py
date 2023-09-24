@@ -30,12 +30,12 @@ from bokeh.plotting import show
 #---------------------------------------------------
 # Initialize ICICI breeze SDK
 #---------------------------------------------------
-breeze = BreezeConnect(api_key="0475177197l66221Bz93*23ts5`5461#")
-print("https://api.icicidirect.com/apiuser/login?api_key="+urllib.parse.quote_plus("0475177197l66221Bz93*23ts5`5461#"))
+breeze = BreezeConnect(api_key="<API KEY>")
+print("https://api.icicidirect.com/apiuser/login?api_key="+urllib.parse.quote_plus("<API KEY>"))
 
 # Generate Session
-breeze.generate_session(api_secret="13214FH!314215`812iP39@o69A4wt23",
-                        session_token="22412920")
+breeze.generate_session(api_secret="<SECRET KEY>",
+                        session_token="<SESSION KEY>")
 # Generate ISO8601 Date/DateTime String
 iso_date_string = datetime.strptime("28/02/2021","%d/%m/%Y").isoformat()[:10] + 'T05:30:00.000Z'
 iso_date_time_string = datetime.strptime("28/02/2021 23:59:59","%d/%m/%Y %H:%M:%S").isoformat()[:19] + '.000Z'
