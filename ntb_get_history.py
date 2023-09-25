@@ -27,6 +27,56 @@ class StockData:
     def get_stock_currency(self):
         return "INR"
 
+    def get_min_max(self):
+        return self._min_max
+
+    def __date_range(self, start_date, end_date):
+        for n in range(int((end_date - start_date).days)):
+            yield start_date + timedelta(n)
+
+    def negative_positive_random(self):
+        return 1 if random.random() < 0.5 else -1
+
+    def pseudo_random(self):
+        return random.uniform(0.01, 0.03)
+
+    def generate_future_data(self, time_steps, min_max, start_date, end_date, latest_close_price):
+        x_future = []
+        y_future = []
+
+        # We need to provide a randomisation algorithm for the close price
+        # This is my own implementation and it will provide a variation of the
+        # close price for a +-1-3% of the original value, when the value wants to go below
+        # zero, it will be forced to go up.
+
+        original_price = latest_close_price
+
+        for single_date in self.__date_range(start_date, end_date):
+            x_future.append(single_date)
+            direction = self.negative_positive_random()
+            random_slope = direction * (self.pseudo_random())
+            #print(random_slope)
+            original_price = original_price + (original_price * random_slope)
+            #print(original_price)
+            if original_price < 0:
+                original_price = 0
+            y_future.append(original_price)
+
+        test_data = pd.DataFrame({'date': x_future, 'close': y_future})
+        test_data = test_data.set_index('date')
+
+        test_scaled = min_max.fit_transform(test_data)
+        x_test = []
+        y_test = []
+        #print(test_scaled.shape[0])
+        for i in range(time_steps, test_scaled.shape[0]):
+            x_test.append(test_scaled[i - time_steps:i])
+            y_test.append(test_scaled[i, 0])
+            #print(i - time_steps)
+
+        x_test, y_test = np.array(x_test), np.array(y_test)
+        x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
+        return x_test, y_test, test_data
 
 
     # Callback to receive ticks.
